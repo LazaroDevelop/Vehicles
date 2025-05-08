@@ -11,5 +11,9 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ApplicationConstants {
-    public final String  VEHICLE_TABLE_NAME = "T_VEHICLE";
+
+    public final String VEHICLE_TABLE_NAME = "T_VEHICLE";
+
+    public final String DISCRIMINATOR_NAME = "vehicle_type";
+    public final String DISCRIMINATOR_DIESEL = "DIESEL";
 }
