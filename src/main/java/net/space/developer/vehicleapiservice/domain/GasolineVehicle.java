@@ -1,15 +1,15 @@
 package net.space.developer.vehicleapiservice.domain;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 
-import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_GASOLINE;
+import java.util.List;
+
+import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.*;
 
 /**
  * Gasoline vehicle entity class
@@ -28,14 +28,13 @@ public class GasolineVehicle extends Vehicle{
     /**
      * Gasoline type
      */
-    @Enumerated(EnumType.ORDINAL)
-    private GasolineType gasolineType;
+    private List<GasolineType> gasolineType;
 
     /**
      * All args constructor
      */
-    public GasolineVehicle(Long id, String vehicleRegistration, String vehicleIdentificationNumber, GasolineType gasolineType){
-        super(id, vehicleRegistration, vehicleIdentificationNumber);
+    public GasolineVehicle(Long id, String vehicleRegistration, String vehicleIdentificationNumber, List<GasolineType> gasolineType){
+        super(id, vehicleRegistration, vehicleIdentificationNumber, VehicleType.GASOLINE);
         this.gasolineType = gasolineType;
     }
 }

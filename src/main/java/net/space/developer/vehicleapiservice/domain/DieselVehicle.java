@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.diesel.InjectionType;
 
 import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_DIESEL;
@@ -35,7 +36,7 @@ public class DieselVehicle extends Vehicle{
      * All args constructor
      */
     public DieselVehicle(Long id, String vehicleRegistration, String vehicleIdentificationNumber, InjectionType bombType){
-        super(id, vehicleRegistration, vehicleIdentificationNumber);
+        super(id, vehicleRegistration, vehicleIdentificationNumber, VehicleType.DIESEL);
         this.bombType = bombType;
     }
 }

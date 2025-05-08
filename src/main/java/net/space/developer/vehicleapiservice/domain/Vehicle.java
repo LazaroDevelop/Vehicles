@@ -2,9 +2,9 @@ package net.space.developer.vehicleapiservice.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import net.space.developer.vehicleapiservice.enums.VehicleType;
 
-import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_NAME;
-import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.VEHICLE_TABLE_NAME;
+import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.*;
 
 /**
  * Vehicle entity class to manage vehicle properties
@@ -26,18 +26,26 @@ public abstract class Vehicle {
      * Identifier
      */
     @Id
+    @Column(name = VEHICLE_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
      * Vehicle registration number
      */
-    @Column(nullable = false, unique = true)
+    @Column(name = VEHICLE_REGISTRATION,nullable = false, unique = true)
     private String vehicleRegistration;
 
     /**
      * Vehicle identification number
      */
-    @Column(nullable = false, unique = true)
+    @Column(name = VEHICLE_IDENTIFICATION_NUMBER, nullable = false, unique = true)
     private String vehicleIdentificationNumber;
+
+    /**
+     * Vehicle type
+     */
+    @Column(name = VEHICLE_TYPE, nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private VehicleType vehicleType;
 }

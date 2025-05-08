@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
 
 import java.math.BigDecimal;
@@ -53,7 +54,7 @@ public class ElectricalVehicle extends Vehicle{
             BigDecimal voltage,
             BigDecimal current
     ){
-        super(id, vehicleRegistration, vehicleIdentificationNumber);
+        super(id, vehicleRegistration, vehicleIdentificationNumber, VehicleType.ELECTRICAL);
         this.batteryType = batteryType;
         this.voltage = voltage;
         this.current = current;
