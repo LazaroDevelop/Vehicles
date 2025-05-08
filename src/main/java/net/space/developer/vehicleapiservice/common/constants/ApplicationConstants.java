@@ -17,4 +17,5 @@ public class ApplicationConstants {
     public final String DISCRIMINATOR_NAME = "vehicle_type";
     public final String DISCRIMINATOR_DIESEL = "DIESEL";
     public final String DISCRIMINATOR_GASOLINE = "GASOLINE";
+    public final String DISCRIMINATOR_ELECTRICAL = "ELECTRICAL";
 }
