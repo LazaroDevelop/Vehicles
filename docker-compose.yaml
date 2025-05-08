@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12
+    container_name: postgres
+    ports:
+      - "8081:5432"
+    environment:
+      POSTGRES_USER: vehicle123
+      POSTGRES_PASSWORD: vcl*
+      POSTGRES_DB: vehicle_db
+    volumes:
+      - ./data:/var/lib/postgresql/data
