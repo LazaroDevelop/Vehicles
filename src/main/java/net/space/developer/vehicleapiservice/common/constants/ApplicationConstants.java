@@ -13,6 +13,12 @@ import lombok.experimental.UtilityClass;
 public class ApplicationConstants {
 
     public final String VEHICLE_TABLE_NAME = "T_VEHICLE";
+    public final String VEHICLE_ID = "VEHICLE_ID";
+    public final String VEHICLE_TYPE = "VEHICLE_TYPE";
+    public final String VEHICLE_REGISTRATION = "VEHICLE_REGISTRATION";
+    public final String VEHICLE_IDENTIFICATION_NUMBER = "VEHICLE_IDENTIFICATION_NUMBER";
+
+    public final String GASOLINE_TYPE = "GASOLINE_TYPE";
 
     // Discriminator values
     public final String DISCRIMINATOR_NAME = "vehicle_type";
