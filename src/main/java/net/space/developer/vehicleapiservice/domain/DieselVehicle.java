@@ -1,4 +1,4 @@
-package net.space.developer.vehicleapiservice.entity;
+package net.space.developer.vehicleapiservice.domain;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
