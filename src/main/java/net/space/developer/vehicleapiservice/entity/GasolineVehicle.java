@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 
@@ -20,6 +21,7 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @DiscriminatorValue(value = DISCRIMINATOR_GASOLINE)
 public class GasolineVehicle extends Vehicle{
 
@@ -30,26 +32,10 @@ public class GasolineVehicle extends Vehicle{
     private GasolineType gasolineType;
 
     /**
-     * Empty constructor
-     */
-    public GasolineVehicle() {
-        super();
-    }
-
-    /**
-     * Copy constructor
+     * All args constructor
      */
     public GasolineVehicle(Long id, String vehicleRegistration, String vehicleIdentificationNumber, GasolineType gasolineType){
         super(id, vehicleRegistration, vehicleIdentificationNumber);
         this.gasolineType = gasolineType;
     }
-
-    /**
-     * Another Copy constructor
-     */
-    public GasolineVehicle(Vehicle vehicle, GasolineType gasolineType) {
-        super(vehicle.getId(), vehicle.getVehicleRegistration(), vehicle.getVehicleIdentificationNumber());
-        this.gasolineType = gasolineType;
-    }
-
 }

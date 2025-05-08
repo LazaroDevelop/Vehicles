@@ -13,11 +13,9 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
  * @since 2025-05-08
  */
 
+@Data
 @Entity
 @Builder
-@Getter
-@Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = VEHICLE_TABLE_NAME)
