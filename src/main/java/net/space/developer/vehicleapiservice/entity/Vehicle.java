@@ -13,7 +13,6 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
  * @since 2025-05-08
  */
 
-
 @Entity
 @Builder
 @Getter
