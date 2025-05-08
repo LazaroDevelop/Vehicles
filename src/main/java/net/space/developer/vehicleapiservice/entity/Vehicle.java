@@ -3,6 +3,7 @@ package net.space.developer.vehicleapiservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_NAME;
 import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.VEHICLE_TABLE_NAME;
 
 /**
@@ -22,6 +23,7 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @AllArgsConstructor
 @Table(name = VEHICLE_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = DISCRIMINATOR_NAME, discriminatorType = DiscriminatorType.STRING)
 public abstract class Vehicle {
     /**
      * Identifier
