@@ -17,8 +17,14 @@ import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 @EqualsAndHashCode(callSuper = true)
 public class GasolineModel extends VehicleModel{
 
+    /**
+     * Gasoline type
+     */
     private GasolineType gasolineType;
 
+    /**
+     * Arguments constructor
+     */
     public GasolineModel(Long id, String vehicleRegistration, String vehicleIdentificationNumber, GasolineType gasolineType){
         super(id, vehicleRegistration, vehicleIdentificationNumber);
         this.gasolineType = gasolineType;

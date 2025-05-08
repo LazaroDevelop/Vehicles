@@ -19,12 +19,24 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 public class ElectricalModel extends VehicleModel{
 
+    /**
+     * Vehicle battery type
+     */
     private BatteryType batteryType;
 
+    /**
+     * Vehicle battery voltage
+     */
     private BigDecimal batteryVoltage;
 
+    /**
+     * Vehicle battery current
+     */
     private BigDecimal batteryCurrent;
 
+    /**
+     * Arguments constructor
+     */
     public ElectricalModel(
             Long id,
             String vehicleRegistration,

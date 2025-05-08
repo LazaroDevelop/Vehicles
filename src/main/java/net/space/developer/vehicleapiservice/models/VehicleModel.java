@@ -23,12 +23,21 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @AllArgsConstructor
 public class VehicleModel {
 
+    /**
+     * Vehicle id
+     */
     private Long id;
 
+    /**
+     * Vehicle registration
+     */
     @NotNull(message = VEHICLE_REGISTRATION_NOT_NULL)
     @NotBlank(message = VEHICLE_REGISTRATION_NOT_EMPTY)
     private String vehicleRegistration;
 
+    /**
+     * Vehicle Identification number
+     */
     @NotNull(message = VIN_NOT_NULL)
     @NotBlank(message = VIN_NOT_EMPTY)
     private String vehicleIdentificationNumber;

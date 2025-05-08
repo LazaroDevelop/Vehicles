@@ -17,8 +17,14 @@ import net.space.developer.vehicleapiservice.enums.diesel.InjectionType;
 @EqualsAndHashCode(callSuper = true)
 public class DieselModel extends VehicleModel{
 
+    /**
+     * Injection bomb type
+     */
     private InjectionType injectionType;
 
+    /**
+     * Argument constructor
+     */
     public DieselModel(Long id, String vehicleRegistration, String vehicleIdentificationNumber, InjectionType injectionType){
         super(id, vehicleRegistration, vehicleIdentificationNumber);
         this.injectionType = injectionType;
