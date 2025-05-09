@@ -1,6 +1,8 @@
 package net.space.developer.vehicleapiservice.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,13 +24,14 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @Setter
 @Entity
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue(DISCRIMINATOR_ELECTRICAL)
 public class ElectricalVehicle extends Vehicle{
 
     /**
      * Battery vehicle type
      */
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private BatteryType batteryType;
 
     /**
@@ -54,9 +57,18 @@ public class ElectricalVehicle extends Vehicle{
             BigDecimal voltage,
             BigDecimal current
     ){
-        super(id, vehicleRegistration, vehicleIdentificationNumber, VehicleType.ELECTRICAL);
+        super(id, vehicleRegistration, vehicleIdentificationNumber);
         this.batteryType = batteryType;
         this.voltage = voltage;
         this.current = current;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @JsonIgnore
+    public VehicleType getVehicleType() {
+        return VehicleType.ELECTRICAL;
     }
 }

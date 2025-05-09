@@ -1,13 +1,15 @@
 package net.space.developer.vehicleapiservice.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 
-import java.util.List;
+import java.util.Set;
 
 import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.*;
 
@@ -22,19 +24,31 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @Setter
 @Entity
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue(value = DISCRIMINATOR_GASOLINE)
 public class GasolineVehicle extends Vehicle{
 
     /**
      * Gasoline type
      */
-    private List<GasolineType> gasolineType;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<GasolineType> gasolineType;
 
     /**
      * All args constructor
      */
-    public GasolineVehicle(Long id, String vehicleRegistration, String vehicleIdentificationNumber, List<GasolineType> gasolineType){
-        super(id, vehicleRegistration, vehicleIdentificationNumber, VehicleType.GASOLINE);
+    public GasolineVehicle(Long id, String vehicleRegistration, String vehicleIdentificationNumber, Set<GasolineType> gasolineType){
+        super(id, vehicleRegistration, vehicleIdentificationNumber);
         this.gasolineType = gasolineType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @JsonIgnore
+    public VehicleType getVehicleType(){
+        return VehicleType.GASOLINE;
     }
 }
