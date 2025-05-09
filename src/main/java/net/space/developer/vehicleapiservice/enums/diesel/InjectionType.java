@@ -1,7 +1,7 @@
 package net.space.developer.vehicleapiservice.enums.diesel;
 
 /**
- * Injection type enumeration class
+ * Injection pump type enumeration class
  *
  * @author Lazaro Noel Guerra Medina
  * @since 2025-05-08
