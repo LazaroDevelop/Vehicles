@@ -1,8 +1,11 @@
-package net.space.developer.vehicleapiservice.models;
+package net.space.developer.vehicleapiservice.model;
+
+import java.util.Set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 
 /**
@@ -20,13 +23,13 @@ public class GasolineModel extends VehicleModel{
     /**
      * Gasoline type
      */
-    private GasolineType gasolineType;
+    private Set<GasolineType> gasolineType;
 
     /**
      * Arguments constructor
      */
-    public GasolineModel(Long id, String vehicleRegistration, String vehicleIdentificationNumber, GasolineType gasolineType){
-        super(id, vehicleRegistration, vehicleIdentificationNumber);
+    public GasolineModel(Long id, String vehicleRegistration, String vehicleIdentificationNumber, Set<GasolineType> gasolineType){
+        super(id, vehicleRegistration, vehicleIdentificationNumber, VehicleType.GASOLINE);
         this.gasolineType = gasolineType;
     }
 }

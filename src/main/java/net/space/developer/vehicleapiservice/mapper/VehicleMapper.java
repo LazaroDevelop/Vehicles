@@ -3,10 +3,14 @@ package net.space.developer.vehicleapiservice.mapper;
 import net.space.developer.vehicleapiservice.domain.DieselVehicle;
 import net.space.developer.vehicleapiservice.domain.ElectricalVehicle;
 import net.space.developer.vehicleapiservice.domain.GasolineVehicle;
-import net.space.developer.vehicleapiservice.models.DieselModel;
-import net.space.developer.vehicleapiservice.models.ElectricalModel;
-import net.space.developer.vehicleapiservice.models.GasolineModel;
+import net.space.developer.vehicleapiservice.domain.Vehicle;
+import net.space.developer.vehicleapiservice.model.DieselModel;
+import net.space.developer.vehicleapiservice.model.ElectricalModel;
+import net.space.developer.vehicleapiservice.model.GasolineModel;
+import net.space.developer.vehicleapiservice.model.VehicleModel;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
 /**
  * Vehicle mapper interface
@@ -16,7 +20,25 @@ import org.mapstruct.Mapper;
  */
 
 @Mapper
+@Component
 public interface VehicleMapper {
+
+    /**
+     * Map from vehicle entity to model
+     *
+     * @param vehicle the {@link Vehicle} entity instance
+     * @return the mapped {@link VehicleModel} model instance
+     */
+    @Mapping(target = "vehicleType", expression = "java(vehicle.getVehicleType())")
+    VehicleModel toVehicleModel(Vehicle vehicle);
+
+    /**
+     * Map from vehicle model to dto
+     *
+     * @param vehicleModel the {@link VehicleModel} model instance
+     * @return the mapped {@link Vehicle} entity instance
+     */
+    Vehicle toVehicle(VehicleModel vehicleModel);
 
     /**
      * Map from Diesel entity to the model

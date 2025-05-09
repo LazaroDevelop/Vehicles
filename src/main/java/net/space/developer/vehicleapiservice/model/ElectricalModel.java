@@ -1,8 +1,9 @@
-package net.space.developer.vehicleapiservice.models;
+package net.space.developer.vehicleapiservice.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
 
 import java.math.BigDecimal;
@@ -13,7 +14,6 @@ import java.math.BigDecimal;
  * @author Lazaro Noel Guerra Medina
  * @since 2025-05-08
  */
-
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -27,12 +27,12 @@ public class ElectricalModel extends VehicleModel{
     /**
      * Vehicle battery voltage
      */
-    private BigDecimal batteryVoltage;
+    private BigDecimal voltage;
 
     /**
      * Vehicle battery current
      */
-    private BigDecimal batteryCurrent;
+    private BigDecimal current;
 
     /**
      * Arguments constructor
@@ -42,13 +42,13 @@ public class ElectricalModel extends VehicleModel{
             String vehicleRegistration,
             String vehicleIdentificationNumber,
             BatteryType batteryType,
-            BigDecimal batteryVoltage,
-            BigDecimal batteryCurrent
+            BigDecimal voltage,
+            BigDecimal current
     ){
-        super(id, vehicleRegistration, vehicleIdentificationNumber);
+        super(id, vehicleRegistration, vehicleIdentificationNumber, VehicleType.ELECTRICAL);
         this.batteryType = batteryType;
-        this.batteryCurrent = batteryCurrent;
-        this.batteryVoltage = batteryVoltage;
+        this.current = current;
+        this.voltage = voltage;
     }
 
 }
