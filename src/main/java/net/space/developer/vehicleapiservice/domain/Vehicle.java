@@ -15,7 +15,6 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = VEHICLE_TABLE_NAME)
@@ -43,9 +42,9 @@ public abstract class Vehicle {
     private String vehicleIdentificationNumber;
 
     /**
-     * Vehicle type
+     * Define the type of the vehicle
+     *
+     * @return the vehicle type
      */
-    @Column(name = VEHICLE_TYPE, nullable = false)
-    @Enumerated(EnumType.ORDINAL)
-    private VehicleType vehicleType;
+    public abstract  VehicleType getVehicleType();
 }
