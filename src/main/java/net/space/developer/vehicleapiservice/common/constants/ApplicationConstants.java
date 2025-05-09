@@ -31,4 +31,9 @@ public class ApplicationConstants {
     public final String VEHICLE_REGISTRATION_NOT_EMPTY = "Vehicle Registration field cannot be empty";
     public final String VIN_NOT_NULL = "Vehicle Identification Number field cannot be null";
     public final String VIN_NOT_EMPTY = "Vehicle Identification Number field cannot be empty";
+
+    public final String VEHICLE_NOT_FOUND_MESSAGE = "Vehicle was not found";
+    public final String VEHICLE_ALREADY_EXISTS_MESSAGE = "This vehicle is already registered";
+    public final String VEHICLE_INVALID_MESSAGE = "Invalid vehicle registration";
+    public final String VEHICLE_INVALID_WITH_BODY = "Invalid vehicle registration for vehicle model {0}";
 }
