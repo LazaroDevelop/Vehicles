@@ -2,14 +2,16 @@ package net.space.developer.vehicleapiservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.space.developer.vehicleapiservice.common.exceptions.VehicleAlreadyRegisteredException;
-import net.space.developer.vehicleapiservice.common.exceptions.VehicleInvalidException;
-import net.space.developer.vehicleapiservice.common.exceptions.VehicleNotFoundException;
+import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleAlreadyRegisteredException;
+import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleConversionFailedException;
+import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleInvalidException;
+import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleNotFoundException;
 import net.space.developer.vehicleapiservice.domain.DieselVehicle;
 import net.space.developer.vehicleapiservice.domain.ElectricalVehicle;
 import net.space.developer.vehicleapiservice.domain.GasolineVehicle;
 import net.space.developer.vehicleapiservice.domain.Vehicle;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
+import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 import net.space.developer.vehicleapiservice.mapper.VehicleMapper;
 import net.space.developer.vehicleapiservice.model.DieselModel;
 import net.space.developer.vehicleapiservice.model.ElectricalModel;
@@ -27,7 +29,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+
+/**
+ * Inventory service implementation class
+ *
+ * @author Lazaro Noel Guerra Medina
+ * @since 2025-05-09
+ */
 
 @Slf4j
 @Service
@@ -64,6 +73,7 @@ public class InventoryServiceImpl implements InventoryService{
      */
     @Override
     public List<VehicleModel> getAllVehicles() {
+
         return inventoryRepository.findAll()
                 .stream()
                 .map(vehicleMapper::toVehicleModel)
@@ -88,20 +98,12 @@ public class InventoryServiceImpl implements InventoryService{
      */
     @Override
     public List<VehicleModel> getVehiclesByType(VehicleType type) {
-        switch (type) {
-            case DIESEL -> {
-                return dieselRepository.findAll().stream().map(vehicleMapper::toVehicleModel).toList();
-            }
-            case ELECTRICAL -> {
-                return electricalRepository.findAll().stream().map(vehicleMapper::toVehicleModel).toList();
-            }
-            case GASOLINE -> {
-                return gasolineRepository.findAll().stream().map(vehicleMapper::toVehicleModel).toList();
-            }
-            default -> {
-                return inventoryRepository.findAll().stream().map(vehicleMapper::toVehicleModel).toList();
-            }
-        }
+
+        return inventoryRepository.findAll()
+                .stream()
+                .filter(vehicle -> type.equals(vehicle.getVehicleType()))
+                .map(vehicleMapper::toVehicleModel)
+                .toList();
     }
 
     /**
@@ -109,8 +111,15 @@ public class InventoryServiceImpl implements InventoryService{
      */
     @Override
     public Page<VehicleModel> getVehiclesByType(VehicleType type, Pageable pageable) {
+
         Page<Vehicle> vehiclePage = inventoryRepository.findAll(pageable);
-        var response = vehiclePage.getContent().stream().map(vehicleMapper::toVehicleModel).toList();
+
+        var response = vehiclePage.getContent()
+                .stream()
+                .filter(vehicle -> type.equals(vehicle.getVehicleType()))
+                .map(vehicleMapper::toVehicleModel)
+                .toList();
+
         return new PageImpl<>(response, pageable, vehiclePage.getTotalElements());
     }
 
@@ -119,27 +128,24 @@ public class InventoryServiceImpl implements InventoryService{
      */
     @Override
     public VehicleModel getVehicleById(long id) {
-        Optional<Vehicle> optionalVehicle = inventoryRepository.findById(id);
 
-        if(optionalVehicle.isPresent()) {
-            Vehicle vehicle = optionalVehicle.get();
+        Vehicle vehicle = inventoryRepository
+                .findById(id)
+                .orElseThrow(VehicleNotFoundException::new);
 
-            switch (vehicle) {
-                case DieselVehicle dieselVehicle -> {
-                    return vehicleMapper.toDieselModel(dieselVehicle);
-                }
-                case GasolineVehicle gasolineVehicle -> {
-                    return vehicleMapper.toGasolineModel(gasolineVehicle);
-                }
-                case ElectricalVehicle electricalVehicle -> {
-                    return vehicleMapper.toElectricalModel(electricalVehicle);
-                }
-                default -> throw new VehicleInvalidException();
+
+        switch (vehicle) {
+            case DieselVehicle dieselVehicle -> {
+                return vehicleMapper.toDieselModel(dieselVehicle);
             }
-
+            case GasolineVehicle gasolineVehicle -> {
+                return vehicleMapper.toGasolineModel(gasolineVehicle);
+            }
+            case ElectricalVehicle electricalVehicle -> {
+                return vehicleMapper.toElectricalModel(electricalVehicle);
+            }
+            default -> throw new VehicleInvalidException();
         }
-
-        throw new VehicleNotFoundException();
     }
 
     /**
@@ -181,36 +187,53 @@ public class InventoryServiceImpl implements InventoryService{
     @Override
     public VehicleModel updateVehicle(VehicleModel vehicleModel, long id) {
 
-        Optional<Vehicle> optionalVehicle = inventoryRepository.findById(id);
+        Vehicle vehicle = inventoryRepository
+                .findById(id)
+                .orElseThrow(VehicleNotFoundException::new);
 
-        if(optionalVehicle.isPresent()) {
-            Vehicle vehicle = optionalVehicle.get();
+        BeanUtils.copyProperties(vehicleModel, vehicle);
 
-            BeanUtils.copyProperties(vehicleModel, vehicle);
+        vehicle.setId(id);
 
-            vehicle.setId(id);
+        var savedVehicle = inventoryRepository.save(vehicle);
 
-            var savedVehicle = inventoryRepository.save(vehicle);
-
-            return vehicleMapper.toVehicleModel(savedVehicle);
-        }
-
-        throw new VehicleNotFoundException();
+        return vehicleMapper.toVehicleModel(savedVehicle);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean deleteVehicle(long id) {
-        Optional<Vehicle> optionalVehicle = inventoryRepository.findById(id);
+    public GasolineModel transformIntoGasoline(long id, Set<GasolineType> gasolineTypes) {
 
-        if(optionalVehicle.isPresent()) {
-            inventoryRepository.delete(optionalVehicle.get());
-            return true;
-        }
+        ElectricalVehicle vehicle = inventoryRepository.findById(id)
+                .filter(ElectricalVehicle.class::isInstance)
+                .map(v -> (ElectricalVehicle) v)
+                .orElseThrow(VehicleConversionFailedException::new);
 
-        return false;
+        GasolineVehicle newGasolineVehicle = new GasolineVehicle();
+        newGasolineVehicle.setId(vehicle.getId());
+        newGasolineVehicle.setVehicleRegistration(vehicle.getVehicleRegistration());
+        newGasolineVehicle.setVehicleIdentificationNumber(vehicle.getVehicleIdentificationNumber());
+        newGasolineVehicle.setGasolineType(gasolineTypes);
+
+        inventoryRepository.delete(vehicle);
+        var result = inventoryRepository.save(newGasolineVehicle);
+
+        return vehicleMapper.toGasolineModel(result);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteVehicle(long id) {
+
+        Vehicle vehicle = inventoryRepository
+                .findById(id)
+                .orElseThrow(VehicleNotFoundException::new);
+
+        inventoryRepository.delete(vehicle);
     }
 
     private boolean isAlreadyRegistered(Vehicle vehicle) {
