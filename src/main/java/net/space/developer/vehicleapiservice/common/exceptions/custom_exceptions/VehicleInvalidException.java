@@ -1,4 +1,4 @@
-package net.space.developer.vehicleapiservice.common.exceptions;
+package net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions;
 
 import net.space.developer.vehicleapiservice.model.VehicleModel;
 

@@ -1,4 +1,4 @@
-package net.space.developer.vehicleapiservice.common.exceptions;
+package net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions;
 
 import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.VEHICLE_NOT_FOUND_MESSAGE;
 
