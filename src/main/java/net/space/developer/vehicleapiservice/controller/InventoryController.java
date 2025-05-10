@@ -3,6 +3,9 @@ package net.space.developer.vehicleapiservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.space.developer.vehicleapiservice.common.assembler.ElectricalRegisterInfoModelAssembler;
+import net.space.developer.vehicleapiservice.common.assembler.RegistrationModelAssembler;
+import net.space.developer.vehicleapiservice.common.assembler.VehicleModelAssembler;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 import net.space.developer.vehicleapiservice.model.RegistrationModel;
@@ -12,6 +15,9 @@ import net.space.developer.vehicleapiservice.service.InventoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +26,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.API_BASE_URL;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Inventory controller class to manage all the endpoints operations
@@ -41,19 +49,30 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     /**
+     * Vehicle model assembler dependency injection
+     */
+    private final VehicleModelAssembler vehicleModelAssembler;
+
+    /**
+     * Registration model assembler dependency injection
+     */
+    private final RegistrationModelAssembler registrationModelAssembler;
+
+    /**
+     * Registration model assembler dependency injection
+     */
+    private final ElectricalRegisterInfoModelAssembler electricalRegisterInfoModelAssembler;
+
+    /**
      * Endpoint to get all the vehicles
      *
      * @return a {@link ResponseEntity} with the response information
      */
     @GetMapping("/all")
-    public ResponseEntity<List<VehicleModel>> getAllVehicles(){
+    public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllVehicles(){
         var response = inventoryService.getAllVehicles();
 
-        if(Objects.isNull(response) || response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
+        return getCollectionModel(response);
     }
 
     /**
@@ -62,14 +81,14 @@ public class InventoryController {
      * @return the {@link RegistrationModel}
      */
     @GetMapping("/vehicles/registration")
-    public ResponseEntity<RegistrationModel> getVehiclesRegistration(){
+    public ResponseEntity<EntityModel<RegistrationModel>> getVehiclesRegistration(){
         RegistrationModel model = inventoryService.getVehiclesRegistration();
 
         if(Objects.isNull(model)){
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(model);
+        return ResponseEntity.status(HttpStatus.OK).body(registrationModelAssembler.toModel(model));
     }
 
     /**
@@ -81,7 +100,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the paginated response information
      */
     @GetMapping("/all/paginated")
-    public ResponseEntity<Page<VehicleModel>> getAllPaginated(
+    public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllPaginated(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam("sort") List<String> sort
@@ -95,11 +114,7 @@ public class InventoryController {
 
         var response = inventoryService.getAllVehicles(request);
 
-        if(Objects.isNull(response) || response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
+        return getCollectionModel(response);
     }
 
     /**
@@ -109,17 +124,13 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the response information
      */
     @GetMapping("/all/by-vehicles")
-    public ResponseEntity<List<VehicleModel>> getAllByVehicleType(@RequestParam("type") String type){
+    public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllByVehicleType(@RequestParam("type") String type){
 
         VehicleType vehicleType = VehicleType.valueOf(type);
 
         var response = inventoryService.getVehiclesByType(vehicleType);
 
-        if(Objects.isNull(response) || response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
+        return getCollectionModel(response);
     }
 
     /**
@@ -129,7 +140,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the paginated response information
      */
     @GetMapping("/all/by-vehicles/paginated")
-    public ResponseEntity<Page<VehicleModel>> getAllByVehicleTypePaginated(
+    public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllByVehicleTypePaginated(
             @RequestParam("type") String type,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -147,11 +158,7 @@ public class InventoryController {
 
         var response = inventoryService.getVehiclesByType(vehicleType, request);
 
-        if(Objects.isNull(response) || response.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(response);
+        return getCollectionModel(response);
     }
 
     /**
@@ -161,14 +168,14 @@ public class InventoryController {
      * @return a {@link ResponseEntity} of the found instance of {@link VehicleModel}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<VehicleModel> getVehicleById(@PathVariable("id") Long id){
+    public ResponseEntity<EntityModel<VehicleModel>> getVehicleById(@PathVariable("id") Long id){
         var response = inventoryService.getVehicleById(id);
 
         if(Objects.isNull(response)){
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(vehicleModelAssembler.toModel(response));
     }
 
     /**
@@ -178,14 +185,14 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with saved or stored {@link VehicleModel} instance
      */
     @PostMapping("/create")
-    public ResponseEntity<VehicleModel> createVehicle(@RequestBody VehicleModel vehicle){
+    public ResponseEntity<EntityModel<VehicleModel>> createVehicle(@RequestBody VehicleModel vehicle){
         var response = inventoryService.createVehicle(vehicle);
 
         if(Objects.isNull(response)){
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehicleModelAssembler.toModel(response));
     }
 
     /**
@@ -196,14 +203,14 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the updated instance of {@link VehicleModel}
      */
     @PutMapping("/update/{id}")
-    public ResponseEntity<VehicleModel> updateVehicle(@PathVariable("id") Long id, @RequestBody VehicleModel vehicle){
+    public ResponseEntity<EntityModel<VehicleModel>> updateVehicle(@PathVariable("id") Long id, @RequestBody VehicleModel vehicle){
         var response = inventoryService.updateVehicle(vehicle, id);
 
         if(Objects.isNull(response)){
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(vehicleModelAssembler.toModel(response));
     }
 
     /**
@@ -214,7 +221,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} the converted instance of the vehicle {@link VehicleModel}
      */
     @PostMapping("/convert/{id}")
-    public ResponseEntity<ElectricalRegisterInfo> convertVehicle(@PathVariable("id") Long id, @RequestBody Set<GasolineType> gasolineTypes){
+    public ResponseEntity<EntityModel<ElectricalRegisterInfo>> convertVehicle(@PathVariable("id") Long id, @RequestBody Set<GasolineType> gasolineTypes){
 
         var response = inventoryService.transformIntoGasoline(id, gasolineTypes);
 
@@ -222,7 +229,7 @@ public class InventoryController {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(electricalRegisterInfoModelAssembler.toModel(response));
     }
 
     /**
@@ -235,5 +242,41 @@ public class InventoryController {
     public ResponseEntity<Void> deleteVehicle(@PathVariable("id") Long id){
         inventoryService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Get the collection model of the vehicles
+     *
+     * @param models the list of vehicle models
+     * @return a {@link ResponseEntity} with the collection model of the vehicles
+     */
+    private ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getCollectionModel(List<VehicleModel> models){
+        if(Objects.isNull(models) || models.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+
+        var result = models.stream().map(vehicleModelAssembler::toModel).toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(CollectionModel.of(
+                result,
+                linkTo(methodOn(InventoryController.class).getAllVehicles()).withSelfRel()
+        ));
+    }
+
+    /**
+     * Get the collection model of the vehicles with paged information
+     *
+     * @param models the list of paged vehicle models
+     * @return a {@link ResponseEntity} with the collection model of the vehicles
+     */
+    private ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getCollectionModel(Page<VehicleModel> models){
+        if(Objects.isNull(models) || models.getContent().isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(CollectionModel.of(
+                models.map(vehicleModelAssembler::toModel),
+                linkTo(methodOn(InventoryController.class).getAllVehicles()).withSelfRel()
+        ));
     }
 }
