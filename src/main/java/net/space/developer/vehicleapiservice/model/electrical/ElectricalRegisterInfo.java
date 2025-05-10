@@ -10,6 +10,13 @@ import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
 
 import java.math.BigDecimal;
 
+/**
+ * Electrical register information DTO class
+ *
+ * @author Lazaro Noel Guerra Medina
+ * @since 2025-05-08
+ */
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -17,10 +24,33 @@ import java.math.BigDecimal;
 @JsonSerialize(using = ConverterSerializer.class)
 public class ElectricalRegisterInfo {
 
+    /**
+     * Vehicle registration number
+     */
     private String vehicleIdentificationNumber;
+
+    /**
+     * Battery voltage
+     */
     private BigDecimal batteryVoltage;
+
+    /**
+     * Battery current
+     */
     private BigDecimal batteryCurrent;
+
+    /**
+     * Battery type
+     */
     private BatteryType batteryType;
+
+    /**
+     * Vehicle registration number
+     */
     private boolean reconverted;
+
+    /**
+     * Converted information
+     */
     private ConvertedInfo convertedInfo;
 }

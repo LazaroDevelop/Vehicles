@@ -11,6 +11,13 @@ import net.space.developer.vehicleapiservice.model.gasoline.GasolineRegisterInfo
 
 import java.util.List;
 
+/**
+ * Registration model DTO class
+ *
+ * @author Lazaro Noel Guerra Medina
+ * @since 2025-05-08
+ */
+
 @Data
 @Builder
 @NoArgsConstructor

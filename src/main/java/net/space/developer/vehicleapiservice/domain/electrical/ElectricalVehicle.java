@@ -1,4 +1,4 @@
-package net.space.developer.vehicleapiservice.domain;
+package net.space.developer.vehicleapiservice.domain.electrical;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.space.developer.vehicleapiservice.domain.Vehicle;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
@@ -28,7 +29,7 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue(DISCRIMINATOR_ELECTRICAL)
-public class ElectricalVehicle extends Vehicle{
+public class ElectricalVehicle extends Vehicle {
 
     /**
      * Battery vehicle type
