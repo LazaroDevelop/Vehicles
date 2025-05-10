@@ -8,5 +8,5 @@ package net.space.developer.vehicleapiservice.enums.electrical;
  */
 
 public enum BatteryType {
-    GEL, LITIO
+    GEL, LITHIUM
 }
