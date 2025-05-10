@@ -13,23 +13,29 @@ import net.space.developer.vehicleapiservice.domain.Vehicle;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 import net.space.developer.vehicleapiservice.mapper.VehicleMapper;
-import net.space.developer.vehicleapiservice.model.DieselModel;
-import net.space.developer.vehicleapiservice.model.ElectricalModel;
-import net.space.developer.vehicleapiservice.model.GasolineModel;
+import net.space.developer.vehicleapiservice.model.RegistrationModel;
+import net.space.developer.vehicleapiservice.model.diesel.DieselModel;
+import net.space.developer.vehicleapiservice.model.diesel.DieselRegisterInfo;
+import net.space.developer.vehicleapiservice.model.electrical.ConvertedInfo;
+import net.space.developer.vehicleapiservice.model.electrical.ElectricalModel;
+import net.space.developer.vehicleapiservice.model.electrical.ElectricalRegisterInfo;
+import net.space.developer.vehicleapiservice.model.gasoline.GasolineModel;
 import net.space.developer.vehicleapiservice.model.VehicleModel;
+import net.space.developer.vehicleapiservice.model.gasoline.GasolineRegisterInfo;
 import net.space.developer.vehicleapiservice.repository.DieselRepository;
 import net.space.developer.vehicleapiservice.repository.ElectricalRepository;
 import net.space.developer.vehicleapiservice.repository.GasolineRepository;
 import net.space.developer.vehicleapiservice.repository.InventoryRepository;
 import net.space.developer.vehicleapiservice.service.InventoryService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Inventory service implementation class
@@ -67,6 +73,37 @@ public class InventoryServiceImpl implements InventoryService{
      * Vehicle inventory repository injection
      */
     private final InventoryRepository inventoryRepository;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RegistrationModel getVehiclesRegistration() {
+        List<ElectricalRegisterInfo> electricalRegisterInfos = new LinkedList<>();
+        List<GasolineRegisterInfo> gasolineRegisterInfos = new LinkedList<>();
+        List<DieselRegisterInfo> dieselRegisterInfos = new LinkedList<>();
+
+        electricalRepository.findAll()
+                .stream()
+                .map(this::mapToElectrical)
+                .collect(Collectors.toCollection(() -> electricalRegisterInfos));
+
+        gasolineRepository.findAll()
+                .stream()
+                .map(this::mapToGasoline)
+                .collect(Collectors.toCollection(() -> gasolineRegisterInfos));
+
+        dieselRepository.findAll()
+                .stream()
+                .map(this::mapToDiesel)
+                .collect(Collectors.toCollection(() -> dieselRegisterInfos));
+
+        return RegistrationModel.builder()
+                .electricalRegisterInfos(electricalRegisterInfos)
+                .dieselRegisterInfos(dieselRegisterInfos)
+                .gasolineRegisterInfos(gasolineRegisterInfos)
+                .build();
+    }
 
     /**
      * {@inheritDoc}
@@ -154,23 +191,11 @@ public class InventoryServiceImpl implements InventoryService{
     @Override
     public VehicleModel createVehicle(VehicleModel vehicleModel) {
 
-        Vehicle vehicle;
-
-        switch (vehicleModel) {
-            case DieselModel dieselModel -> {
-                vehicle = new DieselVehicle();
-                BeanUtils.copyProperties(dieselModel, vehicle);
-            }
-            case ElectricalModel electricalModel -> {
-                vehicle = new ElectricalVehicle();
-                BeanUtils.copyProperties(electricalModel, vehicle);
-            }
-            case GasolineModel gasolineModel -> {
-                vehicle = new GasolineVehicle();
-                BeanUtils.copyProperties(gasolineModel, vehicle);
-            }
-            default -> throw new VehicleInvalidException(vehicleModel);
-        }
+        Vehicle vehicle = switch (vehicleModel.getVehicleType()) {
+            case DIESEL -> vehicleMapper.toDieselVehicle((DieselModel) vehicleModel); 
+            case ELECTRICAL -> vehicleMapper.toElectricalVehicle((ElectricalModel) vehicleModel);
+            case GASOLINE -> vehicleMapper.toGasolineVehicle((GasolineModel) vehicleModel);
+        };
 
         if(isAlreadyRegistered(vehicle)) {
             throw new VehicleAlreadyRegisteredException();
@@ -191,36 +216,41 @@ public class InventoryServiceImpl implements InventoryService{
                 .findById(id)
                 .orElseThrow(VehicleNotFoundException::new);
 
-        BeanUtils.copyProperties(vehicleModel, vehicle);
-
-        vehicle.setId(id);
-
-        var savedVehicle = inventoryRepository.save(vehicle);
-
-        return vehicleMapper.toVehicleModel(savedVehicle);
+        switch (vehicle) {
+            case DieselVehicle dieselVehicle when vehicleModel instanceof DieselModel dieselModel -> {
+                updateDieselVehicle(dieselVehicle, dieselModel);
+                return vehicleMapper.toDieselModel(inventoryRepository.save(dieselVehicle));
+            }
+            case ElectricalVehicle electricalVehicle when vehicleModel instanceof ElectricalModel electricalModel -> {
+                updateElectricalVehicle(electricalVehicle, electricalModel);
+                return vehicleMapper.toElectricalModel(inventoryRepository.save(electricalVehicle));
+            }
+            case GasolineVehicle gasolineVehicle when vehicleModel instanceof GasolineModel gasolineModel -> {
+                updateGasolineVehicle(gasolineVehicle, gasolineModel);
+                return vehicleMapper.toGasolineModel(inventoryRepository.save(gasolineVehicle));
+            }
+            default -> throw new VehicleInvalidException();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public GasolineModel transformIntoGasoline(long id, Set<GasolineType> gasolineTypes) {
+    public ElectricalRegisterInfo transformIntoGasoline(long id, Set<GasolineType> gasolineTypes) {
 
         ElectricalVehicle vehicle = inventoryRepository.findById(id)
                 .filter(ElectricalVehicle.class::isInstance)
                 .map(v -> (ElectricalVehicle) v)
+                .filter(v -> !v.isReconverted())
                 .orElseThrow(VehicleConversionFailedException::new);
 
-        GasolineVehicle newGasolineVehicle = new GasolineVehicle();
-        newGasolineVehicle.setId(vehicle.getId());
-        newGasolineVehicle.setVehicleRegistration(vehicle.getVehicleRegistration());
-        newGasolineVehicle.setVehicleIdentificationNumber(vehicle.getVehicleIdentificationNumber());
-        newGasolineVehicle.setGasolineType(gasolineTypes);
+        vehicle.setReconverted(true);
+        vehicle.setFuelTypePostConversion(gasolineTypes);
 
-        inventoryRepository.delete(vehicle);
-        var result = inventoryRepository.save(newGasolineVehicle);
+        var result = inventoryRepository.save(vehicle);
 
-        return vehicleMapper.toGasolineModel(result);
+        return mapToElectrical(result);
     }
 
     /**
@@ -241,5 +271,58 @@ public class InventoryServiceImpl implements InventoryService{
                 inventoryRepository.existsByVehicleIdentificationNumber(vehicle.getVehicleIdentificationNumber())
                 || inventoryRepository.existsByVehicleRegistration(vehicle.getVehicleRegistration())
         );
+    }
+
+    private ElectricalRegisterInfo mapToElectrical(ElectricalVehicle vehicle){
+
+        ElectricalRegisterInfo eri = new ElectricalRegisterInfo();
+
+        eri.setVehicleIdentificationNumber(vehicle.getVehicleIdentificationNumber());
+        eri.setBatteryType(vehicle.getBatteryType());
+        eri.setBatteryCurrent(vehicle.getCurrent());
+        eri.setBatteryVoltage(vehicle.getVoltage());
+
+        if(vehicle.isReconverted()){
+            eri.setReconverted(true);
+            eri.setConvertedInfo(new ConvertedInfo(vehicle.getVehicleRegistration(), vehicle.getFuelTypePostConversion()));
+        }else{
+            eri.setReconverted(false);
+        }
+
+        return eri;
+    }
+
+    private GasolineRegisterInfo mapToGasoline(GasolineVehicle vehicle){
+        return GasolineRegisterInfo.builder()
+                .vehicleRegistration(vehicle.getVehicleRegistration())
+                .types(vehicle.getGasolineType())
+                .build();
+    }
+
+    private DieselRegisterInfo mapToDiesel(DieselVehicle vehicle){
+        return DieselRegisterInfo.builder()
+                .vehicleRegistration(vehicle.getVehicleRegistration())
+                .pumpType(vehicle.getPumpType())
+                .build();
+    }
+
+    private void updateDieselVehicle(DieselVehicle dieselVehicle, DieselModel dieselModel) {
+        dieselVehicle.setVehicleRegistration(dieselModel.getVehicleRegistration());
+        dieselVehicle.setVehicleIdentificationNumber(dieselModel.getVehicleIdentificationNumber());
+        dieselVehicle.setPumpType(dieselModel.getPumpType());
+    }
+
+    private void updateElectricalVehicle(ElectricalVehicle electricalVehicle, ElectricalModel electricalModel) {
+        electricalVehicle.setVehicleRegistration(electricalModel.getVehicleRegistration());
+        electricalVehicle.setVehicleIdentificationNumber(electricalModel.getVehicleIdentificationNumber());
+        electricalVehicle.setBatteryType(electricalModel.getBatteryType());
+        electricalVehicle.setVoltage(electricalModel.getVoltage());
+        electricalVehicle.setCurrent(electricalModel.getCurrent());
+    }
+
+    private void updateGasolineVehicle(GasolineVehicle gasolineVehicle, GasolineModel gasolineModel) {
+        gasolineVehicle.setVehicleRegistration(gasolineModel.getVehicleRegistration());
+        gasolineVehicle.setVehicleIdentificationNumber(gasolineModel.getVehicleIdentificationNumber());
+        gasolineVehicle.setGasolineType(gasolineModel.getGasolineType());
     }
 }
