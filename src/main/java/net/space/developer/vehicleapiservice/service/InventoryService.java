@@ -1,11 +1,16 @@
 package net.space.developer.vehicleapiservice.service;
 
 import net.space.developer.vehicleapiservice.enums.VehicleType;
+import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
+import net.space.developer.vehicleapiservice.model.RegistrationModel;
+import net.space.developer.vehicleapiservice.model.electrical.ElectricalRegisterInfo;
+import net.space.developer.vehicleapiservice.model.gasoline.GasolineModel;
 import net.space.developer.vehicleapiservice.model.VehicleModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Inventory service interface with all the uses cases signatures
@@ -15,6 +20,14 @@ import java.util.List;
  */
 
 public interface InventoryService {
+
+    /**
+     * Bring the vehicle registration info
+     *
+     * @return a {@link RegistrationModel} instance with the registration information
+     */
+    RegistrationModel getVehiclesRegistration();
+
     /**
      * Retrieve all the vehicles in the inventory
      *
@@ -73,10 +86,18 @@ public interface InventoryService {
     VehicleModel updateVehicle(VehicleModel vehicleModel, long id);
 
     /**
+     * Transform an existing electrical vehicle into a gasoline vehicle
+     *
+     * @param id the identifier of the electrical vehicle
+     * @param gasolineTypes the types of gasoline fuel of the transformed vehicle
+     * @return the transformed {@link GasolineModel}
+     */
+    ElectricalRegisterInfo transformIntoGasoline(long id, Set<GasolineType> gasolineTypes);
+
+    /**
      * Drop or delete an existing vehicle by identifier
      *
      * @param id the vehicle identifier
-     * @return true if was deleted, false in other case
      */
-    boolean deleteVehicle(long id);
+    void deleteVehicle(long id);
 }

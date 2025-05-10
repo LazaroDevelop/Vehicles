@@ -1,12 +1,15 @@
-package net.space.developer.vehicleapiservice.model;
+package net.space.developer.vehicleapiservice.model.gasoline;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
+import net.space.developer.vehicleapiservice.model.VehicleModel;
+
+import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_NAME;
 
 /**
  * Gasoline vehicle model DTO class
@@ -16,14 +19,21 @@ import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
  */
 
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class GasolineModel extends VehicleModel{
+@JsonIgnoreProperties(DISCRIMINATOR_NAME)
+public class GasolineModel extends VehicleModel {
 
     /**
      * Gasoline type
      */
     private Set<GasolineType> gasolineType;
+
+    /**
+     * Empty constructor
+     */
+    public GasolineModel(){
+        super.setVehicleType(VehicleType.GASOLINE);
+    }
 
     /**
      * Arguments constructor

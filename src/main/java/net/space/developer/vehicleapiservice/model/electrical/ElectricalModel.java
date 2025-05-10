@@ -1,12 +1,15 @@
-package net.space.developer.vehicleapiservice.model;
+package net.space.developer.vehicleapiservice.model.electrical;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
+import net.space.developer.vehicleapiservice.model.VehicleModel;
 
 import java.math.BigDecimal;
+
+import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_NAME;
 
 /**
  * Electrical vehicle model DTO class
@@ -15,9 +18,9 @@ import java.math.BigDecimal;
  * @since 2025-05-08
  */
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ElectricalModel extends VehicleModel{
+@JsonIgnoreProperties(value = {DISCRIMINATOR_NAME})
+public class ElectricalModel extends VehicleModel {
 
     /**
      * Vehicle battery type
@@ -33,6 +36,18 @@ public class ElectricalModel extends VehicleModel{
      * Vehicle battery current
      */
     private BigDecimal current;
+
+    /**
+     * Flag to know it was reconverted or not
+     */
+    private boolean reconverted = false;
+
+    /**
+     * Empty constructor
+     */
+    public ElectricalModel(){
+        super.setVehicleType(VehicleType.ELECTRICAL);
+    }
 
     /**
      * Arguments constructor

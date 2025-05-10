@@ -32,7 +32,7 @@ public class GasolineVehicle extends Vehicle{
      * Gasoline type
      */
     @ElementCollection
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Set<GasolineType> gasolineType;
 
     /**
