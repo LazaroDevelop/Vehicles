@@ -1,10 +1,13 @@
-package net.space.developer.vehicleapiservice.model;
+package net.space.developer.vehicleapiservice.model.diesel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.diesel.InjectionType;
+import net.space.developer.vehicleapiservice.model.VehicleModel;
+
+import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_NAME;
 
 /**
  * Diesel vehicle model DTO class
@@ -14,14 +17,21 @@ import net.space.developer.vehicleapiservice.enums.diesel.InjectionType;
  */
 
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class DieselModel extends VehicleModel{
+@JsonIgnoreProperties(DISCRIMINATOR_NAME)
+public class DieselModel extends VehicleModel {
 
     /**
      * Injection bomb type
      */
     private InjectionType pumpType;
+
+    /**
+     * Empty constructor
+     */
+    public DieselModel(){
+        super.setVehicleType(VehicleType.DIESEL);
+    }
 
     /**
      * Argument constructor

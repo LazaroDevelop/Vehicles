@@ -32,7 +32,7 @@ public class DieselVehicle extends Vehicle{
     /**
      * Injection bomb type
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private InjectionType pumpType;
 
     /**
