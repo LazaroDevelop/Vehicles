@@ -11,14 +11,28 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 
 public class VehicleAlreadyRegisteredException extends RuntimeException{
 
+    /**
+     * Default constructor for VehicleAlreadyRegisteredException
+     */
     public VehicleAlreadyRegisteredException(){
         super(VEHICLE_ALREADY_EXISTS_MESSAGE);
     }
 
+    /**
+     * Constructor for VehicleAlreadyRegisteredException with a custom message
+     *
+     * @param message the custom message for the exception
+     */
     public VehicleAlreadyRegisteredException(String message) {
         super(message);
     }
 
+    /**
+     * Constructor for VehicleAlreadyRegisteredException with a custom message and cause
+     *
+     * @param message the custom message for the exception
+     * @param cause the cause of the exception
+     */
     public VehicleAlreadyRegisteredException(String message, Throwable cause) {
         super(message, cause);
     }

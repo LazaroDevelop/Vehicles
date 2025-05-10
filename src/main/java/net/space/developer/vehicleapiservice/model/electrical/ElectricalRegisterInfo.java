@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.space.developer.vehicleapiservice.common.custom_serializer.ConverterSerializer;
+import net.space.developer.vehicleapiservice.common.serializer.ConverterSerializer;
 import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
 
 import java.math.BigDecimal;
