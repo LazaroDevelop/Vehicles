@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
+import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.DISCRIMINATOR_ELECTRICAL;
 
@@ -31,20 +33,32 @@ public class ElectricalVehicle extends Vehicle{
     /**
      * Battery vehicle type
      */
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private BatteryType batteryType;
 
     /**
      * Voltage of the battery
      */
-    @Column(precision = 5, scale = 2, nullable = false)
+    @Column(precision = 5, scale = 2)
     private BigDecimal voltage;
 
     /**
      * Current of the battery
      */
-    @Column(precision = 6, scale = 3, nullable = false)
+    @Column(precision = 6, scale = 3)
     private BigDecimal current;
+
+    /**
+     * Flag to indicate if the vehicle was converted
+     */
+    private boolean reconverted = false;
+
+    /**
+     * Fuel type post conversion
+     */
+    @ElementCollection
+    @Enumerated(EnumType.ORDINAL)
+    private Set<GasolineType> fuelTypePostConversion;
 
     /**
      * All args constructor
