@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
+import net.space.developer.vehicleapiservice.model.RegistrationModel;
 import net.space.developer.vehicleapiservice.model.VehicleModel;
+import net.space.developer.vehicleapiservice.model.electrical.ElectricalRegisterInfo;
 import net.space.developer.vehicleapiservice.service.InventoryService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +46,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the response information
      */
     @GetMapping("/all")
-    public ResponseEntity<?> getAllVehicles(){
+    public ResponseEntity<List<VehicleModel>> getAllVehicles(){
         var response = inventoryService.getAllVehicles();
 
         if(Objects.isNull(response) || response.isEmpty()){
@@ -54,6 +57,22 @@ public class InventoryController {
     }
 
     /**
+     * Endpoint to get the vehicles registration info
+     *
+     * @return the {@link RegistrationModel}
+     */
+    @GetMapping("/vehicles/registration")
+    public ResponseEntity<RegistrationModel> getVehiclesRegistration(){
+        RegistrationModel model = inventoryService.getVehiclesRegistration();
+
+        if(Objects.isNull(model)){
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(model);
+    }
+
+    /**
      * Endpoint to get all the vehicles using pagination
      *
      * @param page the page number
@@ -61,8 +80,8 @@ public class InventoryController {
      * @param sort the sort params
      * @return a {@link ResponseEntity} with the paginated response information
      */
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllPaginated(
+    @GetMapping("/all/paginated")
+    public ResponseEntity<Page<VehicleModel>> getAllPaginated(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam("sort") List<String> sort
@@ -90,7 +109,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the response information
      */
     @GetMapping("/all/by-vehicles")
-    public ResponseEntity<?> getAllByVehicleType(@RequestParam("type") String type){
+    public ResponseEntity<List<VehicleModel>> getAllByVehicleType(@RequestParam("type") String type){
 
         VehicleType vehicleType = VehicleType.valueOf(type);
 
@@ -109,8 +128,8 @@ public class InventoryController {
      * @param type the type of vehicle {@link VehicleType}
      * @return a {@link ResponseEntity} with the paginated response information
      */
-    @GetMapping("/all/by-vehicles")
-    public ResponseEntity<?> getAllByVehicleTypePaginated(
+    @GetMapping("/all/by-vehicles/paginated")
+    public ResponseEntity<Page<VehicleModel>> getAllByVehicleTypePaginated(
             @RequestParam("type") String type,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -142,7 +161,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} of the found instance of {@link VehicleModel}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getVehicleById(@PathVariable("id") Long id){
+    public ResponseEntity<VehicleModel> getVehicleById(@PathVariable("id") Long id){
         var response = inventoryService.getVehicleById(id);
 
         if(Objects.isNull(response)){
@@ -159,7 +178,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with saved or stored {@link VehicleModel} instance
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createVehicle(@RequestBody VehicleModel vehicle){
+    public ResponseEntity<VehicleModel> createVehicle(@RequestBody VehicleModel vehicle){
         var response = inventoryService.createVehicle(vehicle);
 
         if(Objects.isNull(response)){
@@ -177,7 +196,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the updated instance of {@link VehicleModel}
      */
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateVehicle(@PathVariable("id") Long id, @RequestBody VehicleModel vehicle){
+    public ResponseEntity<VehicleModel> updateVehicle(@PathVariable("id") Long id, @RequestBody VehicleModel vehicle){
         var response = inventoryService.updateVehicle(vehicle, id);
 
         if(Objects.isNull(response)){
@@ -195,7 +214,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} the converted instance of the vehicle {@link VehicleModel}
      */
     @PostMapping("/convert/{id}")
-    public ResponseEntity<?> convertVehicle(@PathVariable("id") Long id, @RequestBody Set<GasolineType> gasolineTypes){
+    public ResponseEntity<ElectricalRegisterInfo> convertVehicle(@PathVariable("id") Long id, @RequestBody Set<GasolineType> gasolineTypes){
 
         var response = inventoryService.transformIntoGasoline(id, gasolineTypes);
 
@@ -213,7 +232,7 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with status content
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteVehicle(@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteVehicle(@PathVariable("id") Long id){
         inventoryService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
     }
