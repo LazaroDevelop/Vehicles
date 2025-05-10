@@ -85,23 +85,26 @@ public class InventoryServiceImpl implements InventoryService{
     @Override
     @Cacheable(value = VEHICLE_REGISTRATION_CACHE)
     public RegistrationModel getVehiclesRegistration() {
-        List<ElectricalRegisterInfo> electricalRegisterInfos = new LinkedList<>();
-        List<GasolineRegisterInfo> gasolineRegisterInfos = new LinkedList<>();
-        List<DieselRegisterInfo> dieselRegisterInfos = new LinkedList<>();
+        List<Vehicle> vehicles = inventoryRepository.findAllWithPerformance();
 
-        electricalRepository.findAll()
-                .stream()
-                .map(this::mapToElectrical)
+        List<DieselRegisterInfo> dieselRegisterInfos = new LinkedList<>();
+        List<GasolineRegisterInfo> gasolineRegisterInfos = new LinkedList<>();
+        List<ElectricalRegisterInfo> electricalRegisterInfos = new LinkedList<>();
+
+
+        vehicles.stream()
+                .filter(ElectricalVehicle.class::isInstance)
+                .map(v -> mapToElectrical((ElectricalVehicle) v))
                 .collect(Collectors.toCollection(() -> electricalRegisterInfos));
 
-        gasolineRepository.findAll()
-                .stream()
-                .map(this::mapToGasoline)
+        vehicles.stream()
+                .filter(GasolineVehicle.class::isInstance)
+                .map(v -> mapToGasoline((GasolineVehicle) v))
                 .collect(Collectors.toCollection(() -> gasolineRegisterInfos));
 
-        dieselRepository.findAll()
-                .stream()
-                .map(this::mapToDiesel)
+        vehicles.stream()
+                .filter(DieselVehicle.class::isInstance)
+                .map(v -> mapToDiesel((DieselVehicle) v))
                 .collect(Collectors.toCollection(() -> dieselRegisterInfos));
 
         return RegistrationModel.builder()
@@ -118,7 +121,7 @@ public class InventoryServiceImpl implements InventoryService{
     @Cacheable(value = VEHICLES_CACHE)
     public List<VehicleModel> getAllVehicles() {
 
-        return inventoryRepository.findAll()
+        return inventoryRepository.findAllWithPerformance()
                 .stream()
                 .map(vehicleMapper::toVehicleModel)
                 .toList();
@@ -145,7 +148,7 @@ public class InventoryServiceImpl implements InventoryService{
     @Cacheable(value = VEHICLES_CACHE)
     public List<VehicleModel> getVehiclesByType(VehicleType type) {
 
-        return inventoryRepository.findAll()
+        return inventoryRepository.findAllWithPerformance()
                 .stream()
                 .filter(vehicle -> type.equals(vehicle.getVehicleType()))
                 .map(vehicleMapper::toVehicleModel)
