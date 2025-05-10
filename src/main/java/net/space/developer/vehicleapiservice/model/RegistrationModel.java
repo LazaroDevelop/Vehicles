@@ -1,13 +1,11 @@
 package net.space.developer.vehicleapiservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import net.space.developer.vehicleapiservice.model.diesel.DieselRegisterInfo;
 import net.space.developer.vehicleapiservice.model.electrical.ElectricalRegisterInfo;
 import net.space.developer.vehicleapiservice.model.gasoline.GasolineRegisterInfo;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
@@ -22,7 +20,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationModel {
+@EqualsAndHashCode(callSuper = true)
+public class RegistrationModel extends RepresentationModel<RegistrationModel> {
 
     @JsonProperty("electrical")
     List<ElectricalRegisterInfo> electricalRegisterInfos;
