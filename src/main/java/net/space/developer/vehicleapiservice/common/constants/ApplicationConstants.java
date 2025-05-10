@@ -37,6 +37,10 @@ public final class ApplicationConstants {
     //Routes
     public static final String API_BASE_URL = "/api/v1/vehicles";
 
+    //Cache
+    public static final String VEHICLE_CACHE = "vehicle";
+    public static final String VEHICLES_CACHE = "vehicles";
+    public static final String VEHICLE_REGISTRATION_CACHE = "vehicle-registration";
     private ApplicationConstants(){}
 
 }

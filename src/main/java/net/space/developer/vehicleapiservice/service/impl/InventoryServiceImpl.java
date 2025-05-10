@@ -6,9 +6,9 @@ import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions
 import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleConversionFailedException;
 import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleInvalidException;
 import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleNotFoundException;
-import net.space.developer.vehicleapiservice.domain.DieselVehicle;
-import net.space.developer.vehicleapiservice.domain.ElectricalVehicle;
-import net.space.developer.vehicleapiservice.domain.GasolineVehicle;
+import net.space.developer.vehicleapiservice.domain.diesel.DieselVehicle;
+import net.space.developer.vehicleapiservice.domain.electrical.ElectricalVehicle;
+import net.space.developer.vehicleapiservice.domain.gasoline.GasolineVehicle;
 import net.space.developer.vehicleapiservice.domain.Vehicle;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
@@ -22,11 +22,14 @@ import net.space.developer.vehicleapiservice.model.electrical.ElectricalRegister
 import net.space.developer.vehicleapiservice.model.gasoline.GasolineModel;
 import net.space.developer.vehicleapiservice.model.VehicleModel;
 import net.space.developer.vehicleapiservice.model.gasoline.GasolineRegisterInfo;
-import net.space.developer.vehicleapiservice.repository.DieselRepository;
-import net.space.developer.vehicleapiservice.repository.ElectricalRepository;
-import net.space.developer.vehicleapiservice.repository.GasolineRepository;
+import net.space.developer.vehicleapiservice.repository.diesel.DieselRepository;
+import net.space.developer.vehicleapiservice.repository.electrical.ElectricalRepository;
+import net.space.developer.vehicleapiservice.repository.gasoline.GasolineRepository;
 import net.space.developer.vehicleapiservice.repository.InventoryRepository;
 import net.space.developer.vehicleapiservice.service.InventoryService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +39,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.*;
 
 /**
  * Inventory service implementation class
@@ -78,6 +83,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @Cacheable(value = VEHICLE_REGISTRATION_CACHE)
     public RegistrationModel getVehiclesRegistration() {
         List<ElectricalRegisterInfo> electricalRegisterInfos = new LinkedList<>();
         List<GasolineRegisterInfo> gasolineRegisterInfos = new LinkedList<>();
@@ -109,6 +115,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @Cacheable(value = VEHICLES_CACHE)
     public List<VehicleModel> getAllVehicles() {
 
         return inventoryRepository.findAll()
@@ -121,6 +128,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @Cacheable(value = VEHICLES_CACHE)
     public Page<VehicleModel> getAllVehicles(Pageable pageable) {
 
         Page<Vehicle> vehicleModels = inventoryRepository.findAll(pageable);
@@ -134,6 +142,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @Cacheable(value = VEHICLES_CACHE)
     public List<VehicleModel> getVehiclesByType(VehicleType type) {
 
         return inventoryRepository.findAll()
@@ -147,6 +156,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @Cacheable(value = VEHICLES_CACHE)
     public Page<VehicleModel> getVehiclesByType(VehicleType type, Pageable pageable) {
 
         Page<Vehicle> vehiclePage = inventoryRepository.findAll(pageable);
@@ -164,6 +174,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @Cacheable(value = VEHICLE_CACHE, key = "#id")
     public VehicleModel getVehicleById(long id) {
 
         Vehicle vehicle = inventoryRepository
@@ -210,6 +221,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @CachePut(value = VEHICLE_CACHE, key = "#id", unless = "#result == null")
     public VehicleModel updateVehicle(VehicleModel vehicleModel, long id) {
 
         Vehicle vehicle = inventoryRepository
@@ -257,6 +269,7 @@ public class InventoryServiceImpl implements InventoryService{
      * {@inheritDoc}
      */
     @Override
+    @CacheEvict(value = VEHICLE_CACHE, key = "#id")
     public void deleteVehicle(long id) {
 
         Vehicle vehicle = inventoryRepository
@@ -266,6 +279,12 @@ public class InventoryServiceImpl implements InventoryService{
         inventoryRepository.delete(vehicle);
     }
 
+    /**
+     * Check if the vehicle is already registered
+     *
+     * @param vehicle the vehicle to check
+     * @return true if the vehicle is already registered, false otherwise
+     */
     private boolean isAlreadyRegistered(Vehicle vehicle) {
         return (
                 inventoryRepository.existsByVehicleIdentificationNumber(vehicle.getVehicleIdentificationNumber())
@@ -273,6 +292,12 @@ public class InventoryServiceImpl implements InventoryService{
         );
     }
 
+    /**
+     * Map the electrical vehicle to the electrical register info
+     *
+     * @param vehicle the electrical vehicle
+     * @return the electrical register info
+     */
     private ElectricalRegisterInfo mapToElectrical(ElectricalVehicle vehicle){
 
         ElectricalRegisterInfo eri = new ElectricalRegisterInfo();
@@ -292,6 +317,12 @@ public class InventoryServiceImpl implements InventoryService{
         return eri;
     }
 
+    /**
+     * Map the gasoline vehicle to the gasoline register info
+     *
+     * @param vehicle the gasoline vehicle
+     * @return the gasoline register info
+     */
     private GasolineRegisterInfo mapToGasoline(GasolineVehicle vehicle){
         return GasolineRegisterInfo.builder()
                 .vehicleRegistration(vehicle.getVehicleRegistration())
@@ -299,6 +330,12 @@ public class InventoryServiceImpl implements InventoryService{
                 .build();
     }
 
+    /**
+     * Map the diesel vehicle to the diesel register info
+     *
+     * @param vehicle the diesel vehicle
+     * @return the diesel register info
+     */
     private DieselRegisterInfo mapToDiesel(DieselVehicle vehicle){
         return DieselRegisterInfo.builder()
                 .vehicleRegistration(vehicle.getVehicleRegistration())
@@ -306,12 +343,24 @@ public class InventoryServiceImpl implements InventoryService{
                 .build();
     }
 
+    /**
+     * Update the diesel vehicle with the new information
+     *
+     * @param dieselVehicle the diesel vehicle
+     * @param dieselModel the diesel model
+     */
     private void updateDieselVehicle(DieselVehicle dieselVehicle, DieselModel dieselModel) {
         dieselVehicle.setVehicleRegistration(dieselModel.getVehicleRegistration());
         dieselVehicle.setVehicleIdentificationNumber(dieselModel.getVehicleIdentificationNumber());
         dieselVehicle.setPumpType(dieselModel.getPumpType());
     }
 
+    /**
+     * Update the electrical vehicle with the new information
+     *
+     * @param electricalVehicle the electrical vehicle
+     * @param electricalModel the electrical model
+     */
     private void updateElectricalVehicle(ElectricalVehicle electricalVehicle, ElectricalModel electricalModel) {
         electricalVehicle.setVehicleRegistration(electricalModel.getVehicleRegistration());
         electricalVehicle.setVehicleIdentificationNumber(electricalModel.getVehicleIdentificationNumber());
@@ -320,6 +369,12 @@ public class InventoryServiceImpl implements InventoryService{
         electricalVehicle.setCurrent(electricalModel.getCurrent());
     }
 
+    /**
+     * Update the gasoline vehicle with the new information
+     *
+     * @param gasolineVehicle the gasoline vehicle
+     * @param gasolineModel the gasoline model
+     */
     private void updateGasolineVehicle(GasolineVehicle gasolineVehicle, GasolineModel gasolineModel) {
         gasolineVehicle.setVehicleRegistration(gasolineModel.getVehicleRegistration());
         gasolineVehicle.setVehicleIdentificationNumber(gasolineModel.getVehicleIdentificationNumber());

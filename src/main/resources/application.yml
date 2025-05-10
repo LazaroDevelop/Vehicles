@@ -5,6 +5,12 @@ spring:
   application:
     name: vehicle-api-service
 
+  cache:
+    cache-names:
+      - 'vehicles'
+      - 'vehicle'
+      - 'vehicle-registration'
+
   # Datasource configuration
   datasource:
     driver-class-name: org.postgresql.Driver

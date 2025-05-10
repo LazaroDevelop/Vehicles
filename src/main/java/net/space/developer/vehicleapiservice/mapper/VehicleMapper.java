@@ -1,9 +1,9 @@
 package net.space.developer.vehicleapiservice.mapper;
 
 import net.space.developer.vehicleapiservice.common.exceptions.custom_exceptions.VehicleInvalidException;
-import net.space.developer.vehicleapiservice.domain.DieselVehicle;
-import net.space.developer.vehicleapiservice.domain.ElectricalVehicle;
-import net.space.developer.vehicleapiservice.domain.GasolineVehicle;
+import net.space.developer.vehicleapiservice.domain.diesel.DieselVehicle;
+import net.space.developer.vehicleapiservice.domain.electrical.ElectricalVehicle;
+import net.space.developer.vehicleapiservice.domain.gasoline.GasolineVehicle;
 import net.space.developer.vehicleapiservice.domain.Vehicle;
 import net.space.developer.vehicleapiservice.model.diesel.DieselModel;
 import net.space.developer.vehicleapiservice.model.electrical.ElectricalModel;

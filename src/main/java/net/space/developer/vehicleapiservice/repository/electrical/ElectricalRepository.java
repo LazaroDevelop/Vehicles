@@ -1,6 +1,6 @@
-package net.space.developer.vehicleapiservice.repository;
+package net.space.developer.vehicleapiservice.repository.electrical;
 
-import net.space.developer.vehicleapiservice.domain.ElectricalVehicle;
+import net.space.developer.vehicleapiservice.domain.electrical.ElectricalVehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

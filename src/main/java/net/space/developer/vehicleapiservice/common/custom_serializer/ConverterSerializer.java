@@ -17,14 +17,30 @@ import java.io.IOException;
 
 public class ConverterSerializer extends StdSerializer<ElectricalRegisterInfo> {
 
+    /**
+     * Default constructor for ConverterSerializer
+     */
     public ConverterSerializer(){
         this(null);
     }
 
+    /**
+     * Constructor for ConverterSerializer
+     *
+     * @param electricalRegisterInfoClass Class type of ElectricalRegisterInfo
+     */
     protected ConverterSerializer(Class<ElectricalRegisterInfo> electricalRegisterInfoClass){
         super(electricalRegisterInfoClass);
     }
 
+    /**
+     * Serializes the ElectricalRegisterInfo object to JSON
+     *
+     * @param electricalRegisterInfo The ElectricalRegisterInfo object to serialize
+     * @param jsonGenerator          The JsonGenerator used for serialization
+     * @param serializerProvider     The SerializerProvider used for serialization
+     * @throws IOException If an I/O error occurs during serialization
+     */
     @Override
     public void serialize(
             ElectricalRegisterInfo electricalRegisterInfo,

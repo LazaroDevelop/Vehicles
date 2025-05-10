@@ -1,4 +1,4 @@
-package net.space.developer.vehicleapiservice.domain;
+package net.space.developer.vehicleapiservice.domain.diesel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.DiscriminatorValue;
@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.space.developer.vehicleapiservice.domain.Vehicle;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.diesel.InjectionType;
 
@@ -27,7 +28,7 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue(DISCRIMINATOR_DIESEL)
-public class DieselVehicle extends Vehicle{
+public class DieselVehicle extends Vehicle {
 
     /**
      * Injection bomb type

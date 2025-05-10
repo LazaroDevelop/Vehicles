@@ -1,6 +1,6 @@
-package net.space.developer.vehicleapiservice.repository;
+package net.space.developer.vehicleapiservice.repository.gasoline;
 
-import net.space.developer.vehicleapiservice.domain.GasolineVehicle;
+import net.space.developer.vehicleapiservice.domain.gasoline.GasolineVehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
