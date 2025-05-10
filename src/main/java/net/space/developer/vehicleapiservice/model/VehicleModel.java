@@ -8,11 +8,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.model.diesel.DieselModel;
 import net.space.developer.vehicleapiservice.model.electrical.ElectricalModel;
 import net.space.developer.vehicleapiservice.model.gasoline.GasolineModel;
+import org.springframework.hateoas.RepresentationModel;
 
 import static net.space.developer.vehicleapiservice.common.constants.ApplicationConstants.*;
 
@@ -26,6 +28,7 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = DISCRIMINATOR_NAME)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DieselModel.class, name = DISCRIMINATOR_DIESEL),
@@ -33,7 +36,7 @@ import static net.space.developer.vehicleapiservice.common.constants.Application
         @JsonSubTypes.Type(value = ElectricalModel.class, name = DISCRIMINATOR_ELECTRICAL),
 })
 @JsonIgnoreProperties(DISCRIMINATOR_NAME)
-public class VehicleModel {
+public class VehicleModel extends RepresentationModel<VehicleModel> {
 
     /**
      * Vehicle id

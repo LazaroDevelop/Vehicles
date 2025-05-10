@@ -1,4 +1,4 @@
-package net.space.developer.vehicleapiservice.common.custom_serializer;
+package net.space.developer.vehicleapiservice.common.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
