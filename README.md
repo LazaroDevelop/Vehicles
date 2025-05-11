@@ -106,7 +106,7 @@ Run via:
 
 ### 📄 API Documentation (Swagger)
 
-Access the Swagger UI at `http://localhost:8080/swagger-ui.html`.
+Access the Swagger UI at `http://localhost:8081/swagger-ui.html`.
 
 Placeholder for Swagger UI screenshot:
 
@@ -131,20 +131,14 @@ docker build -t vehicle-api:latest .
 
 Once the application is up, you can perform standard CRUD operations on `/api/vehicles`:
 
-* `GET /api/vehicles` - List all vehicles
+* `GET /api/vehicles/all` - List all vehicles
 * `GET /api/vehicles/{id}` - Get vehicle by ID
-* `POST /api/vehicles` - Create new vehicle
-* `PUT /api/vehicles/{id}` - Update existing vehicle
-* `DELETE /api/vehicles/{id}` - Remove a vehicle
+* `POST /api/vehicles/create` - Create new vehicle
+* `PUT /api/vehicles/update/{id}` - Update existing vehicle
+* `DELETE /api/vehicles/delete/{id}` - Remove a vehicle
 
 ---
 
 ### 🤝 Contributing
 
 Contributions are welcome! Please open issues and pull requests.
-
----
-
-### 📜 License
-
-Distributed under the MIT License. See `LICENSE` for details.
