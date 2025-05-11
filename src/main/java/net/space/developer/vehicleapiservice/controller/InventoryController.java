@@ -1,6 +1,10 @@
 package net.space.developer.vehicleapiservice.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.space.developer.vehicleapiservice.common.assembler.ElectricalRegisterInfoModelAssembler;
@@ -41,6 +45,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping(API_BASE_URL)
 @RequiredArgsConstructor
+@Tag(name = "Inventory API", description = "Inventory API to manage all the vehicle operations")
 public class InventoryController {
 
     /**
@@ -69,6 +74,13 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the response information
      */
     @GetMapping("/all")
+    @Tag(name = "Inventory API", description = "Get all the vehicles in the inventory")
+    @Operation(summary = "Get all vehicles", description = "Get all the vehicles in the inventory")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetched all vehicles"),
+            @ApiResponse(responseCode = "204", description = "No content found"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllVehicles(){
         var response = inventoryService.getAllVehicles();
 
@@ -81,6 +93,13 @@ public class InventoryController {
      * @return the {@link RegistrationModel}
      */
     @GetMapping("/registration")
+    @Tag(name = "Inventory API", description = "Get the vehicles registration information")
+    @Operation(summary = "Get vehicles registration", description = "Get the vehicles registration information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetched vehicles registration"),
+            @ApiResponse(responseCode = "204", description = "No content found"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     public ResponseEntity<EntityModel<RegistrationModel>> getVehiclesRegistration(){
         RegistrationModel model = inventoryService.getVehiclesRegistration();
 
@@ -100,6 +119,13 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the paginated response information
      */
     @GetMapping("/all/paginated")
+    @Tag(name = "Inventory API", description = "Get all the vehicles in the inventory using pagination")
+    @Operation(summary = "Get all vehicles paginated", description = "Get all the vehicles in the inventory using pagination")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetched all vehicles"),
+            @ApiResponse(responseCode = "204", description = "No content found"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllPaginated(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -124,6 +150,13 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the response information
      */
     @GetMapping("/all/by-vehicles")
+    @Tag(name = "Inventory API", description = "Get all the vehicles in the inventory by type")
+    @Operation(summary = "Get all vehicles by type", description = "Get all the vehicles in the inventory by type")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetched all vehicles"),
+            @ApiResponse(responseCode = "204", description = "No content found"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllByVehicleType(@RequestParam("type") String type){
 
         VehicleType vehicleType = VehicleType.valueOf(type);
@@ -140,6 +173,13 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the paginated response information
      */
     @GetMapping("/all/by-vehicles/paginated")
+    @Tag(name = "Inventory API", description = "Get all the vehicles in the inventory by type using pagination")
+    @Operation(summary = "Get all vehicles by type paginated", description = "Get all the vehicles in the inventory by type using pagination")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetched all vehicles"),
+            @ApiResponse(responseCode = "204", description = "No content found"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllByVehicleTypePaginated(
             @RequestParam("type") String type,
             @RequestParam("page") int page,
@@ -168,6 +208,12 @@ public class InventoryController {
      * @return a {@link ResponseEntity} of the found instance of {@link VehicleModel}
      */
     @GetMapping("/{id}")
+    @Tag(name = "Inventory API", description = "Get a specific vehicle by identifier")
+    @Operation(summary = "Get vehicle by id", description = "Get a specific vehicle by identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully fetched vehicle"),
+            @ApiResponse(responseCode = "404", description = "No content found"),
+    })
     public ResponseEntity<EntityModel<VehicleModel>> getVehicleById(@PathVariable("id") Long id){
         var response = inventoryService.getVehicleById(id);
 
@@ -185,6 +231,12 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with saved or stored {@link VehicleModel} instance
      */
     @PostMapping("/create")
+    @Tag(name = "Inventory API", description = "Create and store a new vehicle information")
+    @Operation(summary = "Create vehicle", description = "Create and store a new vehicle information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully created vehicle"),
+            @ApiResponse(responseCode = "204", description = "No content found")
+    })
     public ResponseEntity<EntityModel<VehicleModel>> createVehicle(@RequestBody VehicleModel vehicle){
         var response = inventoryService.createVehicle(vehicle);
 
@@ -203,6 +255,12 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with the updated instance of {@link VehicleModel}
      */
     @PutMapping("/update/{id}")
+    @Tag(name = "Inventory API", description = "Update an existing vehicle by identifier")
+    @Operation(summary = "Update vehicle", description = "Update an existing vehicle by identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated vehicle"),
+            @ApiResponse(responseCode = "404", description = "No content found")
+    })
     public ResponseEntity<EntityModel<VehicleModel>> updateVehicle(@PathVariable("id") Long id, @RequestBody VehicleModel vehicle){
         var response = inventoryService.updateVehicle(vehicle, id);
 
@@ -221,6 +279,13 @@ public class InventoryController {
      * @return a {@link ResponseEntity} the converted instance of the vehicle {@link VehicleModel}
      */
     @PostMapping("/convert/{id}")
+    @Tag(name = "Inventory API", description = "Convert an electrical vehicle to a gasoline vehicle")
+    @Operation(summary = "Convert vehicle", description = "Convert an electrical vehicle to a gasoline vehicle")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully converted vehicle"),
+            @ApiResponse(responseCode = "204", description = "No content found"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     public ResponseEntity<EntityModel<ElectricalRegisterInfo>> convertVehicle(@PathVariable("id") Long id, @RequestBody Set<GasolineType> gasolineTypes){
 
         if(Objects.isNull(gasolineTypes) || gasolineTypes.isEmpty()){
@@ -243,6 +308,12 @@ public class InventoryController {
      * @return a {@link ResponseEntity} with status content
      */
     @DeleteMapping("/delete/{id}")
+    @Tag(name = "Inventory API", description = "Delete a specific vehicle by identifier")
+    @Operation(summary = "Delete vehicle", description = "Delete a specific vehicle by identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted vehicle"),
+            @ApiResponse(responseCode = "404", description = "No content found")
+    })
     public ResponseEntity<Void> deleteVehicle(@PathVariable("id") Long id){
         inventoryService.deleteVehicle(id);
         return ResponseEntity.noContent().build();
