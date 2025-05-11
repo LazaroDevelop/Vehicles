@@ -1,10 +1,7 @@
 package net.space.developer.vehicleapiservice.model.electrical;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import net.space.developer.vehicleapiservice.common.serializer.ConverterSerializer;
 import net.space.developer.vehicleapiservice.enums.electrical.BatteryType;
 import org.springframework.hateoas.RepresentationModel;
@@ -20,8 +17,9 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @JsonSerialize(using = ConverterSerializer.class)
 public class ElectricalRegisterInfo extends RepresentationModel<ElectricalRegisterInfo> {
 

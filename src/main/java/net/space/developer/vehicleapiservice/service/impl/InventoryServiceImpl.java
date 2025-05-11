@@ -184,7 +184,6 @@ public class InventoryServiceImpl implements InventoryService{
                 .findById(id)
                 .orElseThrow(VehicleNotFoundException::new);
 
-
         switch (vehicle) {
             case DieselVehicle dieselVehicle -> {
                 return vehicleMapper.toDieselModel(dieselVehicle);
