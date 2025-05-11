@@ -1,1 +1,32 @@
-spring.application.name=vehicle-api-service
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: vehicle-api-service
+
+  cache:
+    cache-names:
+      - 'vehicles'
+      - 'vehicle'
+      - 'vehicle-registration'
+
+  # Datasource configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USER:vehicle123}
+    password: ${DB_PASSWORD:vcl*}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:vehicle_db}
+
+  # JPA hibernate configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Server port
+server:
+  port: ${SERVER_PORT:8082}
