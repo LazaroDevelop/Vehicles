@@ -80,7 +80,7 @@ public class InventoryController {
      *
      * @return the {@link RegistrationModel}
      */
-    @GetMapping("/vehicles/registration")
+    @GetMapping("/registration")
     public ResponseEntity<EntityModel<RegistrationModel>> getVehiclesRegistration(){
         RegistrationModel model = inventoryService.getVehiclesRegistration();
 
@@ -222,6 +222,10 @@ public class InventoryController {
      */
     @PostMapping("/convert/{id}")
     public ResponseEntity<EntityModel<ElectricalRegisterInfo>> convertVehicle(@PathVariable("id") Long id, @RequestBody Set<GasolineType> gasolineTypes){
+
+        if(Objects.isNull(gasolineTypes) || gasolineTypes.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
 
         var response = inventoryService.transformIntoGasoline(id, gasolineTypes);
 

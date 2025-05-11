@@ -23,12 +23,21 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class RegistrationModel extends RepresentationModel<RegistrationModel> {
 
+    /**
+     * List representation of the electrical vehicles info
+     */
     @JsonProperty("electrical")
     List<ElectricalRegisterInfo> electricalRegisterInfos;
 
+    /**
+     * List representation of the gasoline vehicles info
+     */
     @JsonProperty("gasoline")
     List<GasolineRegisterInfo> gasolineRegisterInfos;
 
+    /**
+     * List representation of the diesel vehicles info
+     */
     @JsonProperty("diesel")
     List<DieselRegisterInfo> dieselRegisterInfos;
 }
