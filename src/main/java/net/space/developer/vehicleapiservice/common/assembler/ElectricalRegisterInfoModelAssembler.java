@@ -2,12 +2,11 @@ package net.space.developer.vehicleapiservice.common.assembler;
 
 import net.space.developer.vehicleapiservice.controller.InventoryController;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
+import net.space.developer.vehicleapiservice.model.ConversionModel;
 import net.space.developer.vehicleapiservice.model.electrical.ElectricalRegisterInfo;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -32,6 +31,6 @@ public class ElectricalRegisterInfoModelAssembler implements RepresentationModel
     @Override
     public EntityModel<ElectricalRegisterInfo> toModel(ElectricalRegisterInfo registerInfo) {
         return EntityModel.of(registerInfo,
-                linkTo(methodOn(InventoryController.class).convertVehicle(1L, Set.of(GasolineType.B83))).withSelfRel());
+                linkTo(methodOn(InventoryController.class).convertVehicle(1L, null)).withSelfRel());
     }
 }

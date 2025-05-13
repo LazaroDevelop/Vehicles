@@ -12,6 +12,7 @@ import net.space.developer.vehicleapiservice.common.assembler.RegistrationModelA
 import net.space.developer.vehicleapiservice.common.assembler.VehicleModelAssembler;
 import net.space.developer.vehicleapiservice.enums.VehicleType;
 import net.space.developer.vehicleapiservice.enums.gasoline.GasolineType;
+import net.space.developer.vehicleapiservice.model.ConversionModel;
 import net.space.developer.vehicleapiservice.model.RegistrationModel;
 import net.space.developer.vehicleapiservice.model.VehicleModel;
 import net.space.developer.vehicleapiservice.model.electrical.ElectricalRegisterInfo;
@@ -296,7 +297,7 @@ public class InventoryController {
      * Endpoint to transform or convert an electrical vehicle to a gasoline vehicle
      *
      * @param id the identifier of the electrical vehicle
-     * @param gasolineTypes the set of gasoline's that use the transformed car
+     * @param model the model with the set of gasoline's that use the transformed car
      * @return a {@link ResponseEntity} the converted instance of the vehicle {@link VehicleModel}
      */
     @PostMapping("/convert/{id}")
@@ -307,19 +308,19 @@ public class InventoryController {
             @ApiResponse(responseCode = "204", description = "No content found"),
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
-    public ResponseEntity<EntityModel<ElectricalRegisterInfo>> convertVehicle(@PathVariable("id") Long id, @RequestBody Set<GasolineType> gasolineTypes){
+    public ResponseEntity<ElectricalRegisterInfo> convertVehicle(@PathVariable("id") Long id, @RequestBody ConversionModel model){
 
-        if(Objects.isNull(gasolineTypes) || gasolineTypes.isEmpty()){
+        if(Objects.isNull(model.getFuelType()) || model.getFuelType().isEmpty()){
             return ResponseEntity.badRequest().build();
         }
 
-        var response = inventoryService.transformIntoGasoline(id, gasolineTypes);
+        var response = inventoryService.transformIntoGasoline(id, model.getFuelType());
 
         if(Objects.isNull(response)){
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(electricalRegisterInfoModelAssembler.toModel(response));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
