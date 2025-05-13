@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -126,7 +127,7 @@ public class InventoryController {
             @ApiResponse(responseCode = "204", description = "No content found"),
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
-    public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllPaginated(
+    public ResponseEntity<PagedModel<EntityModel<VehicleModel>>> getAllPaginated(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam("sort") List<String> sort
@@ -180,7 +181,7 @@ public class InventoryController {
             @ApiResponse(responseCode = "204", description = "No content found"),
             @ApiResponse(responseCode = "400", description = "Bad request")
     })
-    public ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getAllByVehicleTypePaginated(
+    public ResponseEntity<PagedModel<EntityModel<VehicleModel>>> getAllByVehicleTypePaginated(
             @RequestParam("type") String type,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
@@ -344,14 +345,23 @@ public class InventoryController {
      * @param models the list of paged vehicle models
      * @return a {@link ResponseEntity} with the collection model of the vehicles
      */
-    private ResponseEntity<CollectionModel<EntityModel<VehicleModel>>> getCollectionModel(Page<VehicleModel> models){
+    private ResponseEntity<PagedModel<EntityModel<VehicleModel>>> getCollectionModel(Page<VehicleModel> models){
         if(Objects.isNull(models) || models.getContent().isEmpty()){
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(CollectionModel.of(
-                models.map(vehicleModelAssembler::toModel),
-                linkTo(methodOn(InventoryController.class).getAllVehicles()).withSelfRel()
-        ));
+        PagedModel.PageMetadata metadata = new PagedModel.PageMetadata(
+                models.getSize(),
+                models.getNumber(),
+                models.getTotalElements(),
+                models.getTotalPages()
+        );
+
+        var response = PagedModel.of(
+                models.getContent().stream().map(vehicleModelAssembler::toModel).toList(),
+                metadata
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
