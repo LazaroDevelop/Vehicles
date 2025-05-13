@@ -130,14 +130,23 @@ public class InventoryController {
     public ResponseEntity<PagedModel<EntityModel<VehicleModel>>> getAllPaginated(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @RequestParam("sort") List<String> sort
+            @RequestParam(value = "sort", required = false) List<String> sort
     ){
-        String field = sort.getFirst();
-        String dir = sort.getLast();
+        if(Objects.nonNull(sort)){
 
-        Sort.Direction direction = dir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            String field = sort.getFirst();
+            String dir = sort.getLast();
 
-        PageRequest request = PageRequest.of(page, size, Sort.by(direction, field));
+            Sort.Direction direction = dir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+            PageRequest request = PageRequest.of(page, size, Sort.by(direction, field));
+
+            var response = inventoryService.getAllVehicles(request);
+
+            return getCollectionModel(response);
+        }
+
+        PageRequest request = PageRequest.of(page, size);
 
         var response = inventoryService.getAllVehicles(request);
 
@@ -185,15 +194,26 @@ public class InventoryController {
             @RequestParam("type") String type,
             @RequestParam("page") int page,
             @RequestParam("size") int size,
-            @RequestParam("sort") List<String> sort
+            @RequestParam(value = "sort", required = false) List<String> sort
     ){
 
-        String field = sort.getFirst();
-        String dir = sort.getLast();
+        if(Objects.nonNull(sort)){
 
-        Sort.Direction direction = dir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            String field = sort.getFirst();
+            String dir = sort.getLast();
 
-        PageRequest request = PageRequest.of(page, size, Sort.by(direction, field));
+            Sort.Direction direction = dir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+            PageRequest request = PageRequest.of(page, size, Sort.by(direction, field));
+
+            VehicleType vehicleType = VehicleType.valueOf(type);
+
+            var response = inventoryService.getVehiclesByType(vehicleType, request);
+
+            return getCollectionModel(response);
+        }
+
+        PageRequest request = PageRequest.of(page, size);
 
         VehicleType vehicleType = VehicleType.valueOf(type);
 
