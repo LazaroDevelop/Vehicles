@@ -1,4 +1,4 @@
-## Vehicle API
+# 🚗 Vehicle API
 
 **Description**
 A RESTful API for registering and managing vehicle operations, built with Java 21 and Spring Boot 3.4.5.
